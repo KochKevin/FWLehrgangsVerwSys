@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+
+    <title>Signup</title>
+
+    <link rel="stylesheet" href="style.css">
+    <script src="{{ url_for('static', filename='js/signup.js') }}"></script>
+  </head>
+  <body>
+
+    <h2>Signup</h2>
+    
+
+    <form id = "signupForm" action = "">
+
+      <s><h3>Gemeinde<h3></s>
+      <input type = "text" id="municipalitie">
+
+      <s><h3>Feuerwehr<h3></s>
+      <input type = "text" id="fire_station">
+
+      <h3>Vorname<h3>
+      <input type = "text" id="firstName" required>
+
+      <h3>Nachname<h3>
+      <input type = "text" id="lastName" required>
+
+      <h3>Email<h3>
+      <input type = "email" id="email" required>
+
+      <h3>Passwort<h3>
+      <input type = "password" id="password" required>
+
+      <br>
+
+      <button type="submit">Registrieren</button>
+
+      <div id = "signupError"></div>
+  
+    </form>
+
+
+  </body>
+</html>

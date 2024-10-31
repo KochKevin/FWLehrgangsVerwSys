@@ -1,0 +1,8 @@
+SELECT 
+training_units.titel, training_units.numner, training_units.learngoals, training_units.content, training_units.comments,
+user_sessions.session_id, user_sessions.type, user_sessions.is_done, user_sessions.is_done_timesta,p
+FROM user_sessions
+INNER JOIN training_units
+ON training_units.training_unit_id = user_sessions.training_unit_id
+WHERE  qualification_id = 1
+AND user_id = 35

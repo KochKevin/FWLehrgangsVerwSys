@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+
+    <title>Qualification</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="{{ url_for('static', filename='js/qualification.js') }}"></script>
+  </head>
+
+  <body>
+
+    <button type="button" onclick = "onLogout()">Abmelden</button> 
+    <button type="button" onclick = "onToDashboard()">Dashboard</button> 
+
+    <h2 id = "qualificationName"></h2>
+
+
+    <hr>
+
+    <!--Trainig Unit-->
+    <!-- -> Session/s-->
+
+
+    <div id = "trainingUnitList"></div>
+
+
+  </body>
+</html>

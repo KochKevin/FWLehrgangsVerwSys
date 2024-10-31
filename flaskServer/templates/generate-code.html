@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <title>Generate-Code</title>
+
+    <link rel="stylesheet" href="style.css" />
+
+    <script src="{{ url_for('static', filename='js/libraries/davidshimjs-qrcodejs-04f46c6/qrcode.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/generate-code.js') }}"></script>
+
+    <style>
+      th,
+      td {
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-left: 20px;
+        padding-right: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Put each forms in an own div -->
+
+    <button type="button" onclick="onToDashboard()">Dashboard</button>
+
+    <div id="codeTable"></div>
+
+    <div id="codeCreation">
+      <form style="visibility:hidden;" id="codeCreationForm">
+        <h2>Neue Qualifikation erstellen</h2>
+
+        <label>Qualifikations Level:</label>
+
+        <select id="qualificationLevelDropdown">
+        </select>
+
+        <br />
+        <br />
+
+        <label>Maximalanzahl an benutzungen:</label>
+
+        <input type="number" id="maxAmountOfUses"/>
+
+        <br />
+
+        <div id="provisionalEndTime"></div>
+
+        <br />
+
+        <button type="button" id="closeFormButton" onclick="()">Schließen</button>
+        <button type="button" id="saveFormButton" onclick="onSaveCodeClicked()">Speichern</button>
+      </form>
+    </div>
+
+    <div id="codeUpdate">
+      <form style="visibility:hidden;" id="codeSettingsForm">
+        <h2>Einstellungen</h2>
+
+        <!-- 
+      <label>Qualifikations Level:</label>
+
+      <select id="qualificationLevelDropdown">
+        <option value="none"> Auswählen </option>
+        <option value="1"> 1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+      </select>
+
+      <br>
+      <br>
+
+      <label>Maximalanzahl an benutzungen:</label>
+
+      <input type="number" id="maxAmountOfUses" min="1" value="15"/>
+      
+      <br>
+
+      <div id = "provisionalEndTime"></div>
+
+      <br>
+     -->
+        <button type="button" id="closeFormButton" onclick="()">Schließen</button>
+        <button type="button" id="updateFormButton" onclick="onUpdateCodeClicked()">Updaten</button>
+      </form>
+
+      <br />
+      <br />
+
+      <div id="qrcode" style="visibility:hidden;"></div>
+      <div id="codeText" style="visibility:hidden;"></div>
+    </div>
+  </body>
+</html>
