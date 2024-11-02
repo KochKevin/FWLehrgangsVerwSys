@@ -40,7 +40,8 @@ def create_qr_code():
             "qualification_level" : row[2],
             "created_timestamp" : row[4],
             "end_timestamp" : row[5],
-            "amount_of_uses" : row[6]
+            "amount_of_uses" : row[6],
+            "max_amount_of_uses" : row[7]
         })
     
     

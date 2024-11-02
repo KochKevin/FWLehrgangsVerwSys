@@ -1,6 +1,4 @@
 #Create new entry in db
-
-from time import timezone
 from flask import Blueprint, session,request, jsonify
 import blueprints.db
 import datetime
@@ -37,14 +35,14 @@ def create_qr_code():
     data = request.json
 
     qualification_id = data.get("qualification_level")
-    max_user_amount = data.get("max_user_amount")
+    max_amount_of_uses = data.get("max_amount_of_uses")
     
     
     #end timestamp current time + 24 hours
     active_hours = 24
     end_timestamp = datetime.datetime.now() + datetime.timedelta(hours=active_hours)
     
-    qr_code_id = blueprints.db.add_QRCode_qualification_certificate(qualification_id, user_id, end_timestamp)
+    qr_code_id = blueprints.db.add_QRCode_qualification_certificate(qualification_id, user_id, end_timestamp, max_amount_of_uses)
     
     
     qr_code = ""

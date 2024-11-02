@@ -257,11 +257,18 @@ function sendCode(code){
     })
     .then(data => {
 
+        if(data.status == 0){
+            alert(data.error_message);
+            return;
+        }
+
+
         message = data.message;
 
         alert(message);
 
-        window.location.href = "https://192.168.178.71:5000/dashboard";
+        
+        onToDashboard()
         
 
     })

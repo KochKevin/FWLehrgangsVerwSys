@@ -54,7 +54,7 @@ function addQualification(id, titel, totalSessionAmount, totalSessionsDone, is_d
     let pdfExportButton = "<br>"
 
     if(is_done){
-        pdfExportButton = "<button type='button' onclick = 'onClickExportPDF(" + id + ")'>Export PDF</button>"
+       // pdfExportButton = "<button type='button' onclick = 'onClickExportPDF(" + id + ")'>Export PDF</button>"
     }
 
 

@@ -1,0 +1,40 @@
+// 1. Die App soll ausschließlich für den Teilnehmer sein.
+
+2. Abgebildet werden sollen alle 13 Module, untergliedert in den geforderten Einzeldiensten 1UE/45 min.
+
+	- 1.0 Rechtsgrundlagen und Organisation - 1.1 Organisation der Feuerwehr	- Theorie
+                                        	- 1.2 Unfallversicherung        	- Theorie
+                                        	- 1.2 ...                       	- Praxis
+
+	- 2.0 Brennen und Löschen           	- 2.0 Brennen und Löschen       	- Theorie
+                                        	- 2.0 ...                       	- Theorie
+                                        	- 2.0 Brennen und Löschen       	- Praxis
+
+	- 3.0 Fehrezugkunde                 	- 3.1 Fahrzeugkunde Theorie     	- Theorie
+	...
+	...
+	...
+
+
+System Aufbau:
+
+Basis-modul	besteht aus 	mehreren Ausbildungseinheiten 	besteht aus mehreren	Einzelstunden     	 
+                                    	/\                                                	/\
+                            	Lernziele, Inhalte, Bemerkungen                     	Theorie / Praxis   -> Einzelstunden sind 45min
+
+basic_modules               	training_units                                         	sessions           	 
+
+
+
+
+3.  Die Absolvierung der Einzeldienste soll nur von dem Teilnehmer als „erledigt“ markiert werden.
+	Dabei soll das Datum entweder automatisch oder händisch gespeichert werden. (Dies dient zur Nachverfolgbarkeit in Feueron).
+	Die Zweite Freigabe durch einen Ausbilder, wie wir ursprünglich besprochen haben, ist nicht zwingend notwendig.
+
+4. Wenn ein Modul vollständig absolviert worden ist, soll der Teilnehmer eine PDF erzeugen können, die die absolvierten Dienste mit Datum auflistet und bestätigt, dass das Modul z.B. vom  Teilnehmer vollständig erbracht worden ist. Wünschenswert wäre hier, dass sie gleich an eine Emailadresse z.B. Ortsbrandmeister geschickt werden kann, damit dieser die Daten mit FON (Feueron) abgleichen kann und die Tauglichkeit in der Personalakte freigibt.
+
+-> Datenbank mit allen Feuerwehren + Email's der OB's oder Ausbildungsverantwortlichen
+
+-> Die OF kriegt eine Email mit einer Datei, die in FeuerOn importiert wird, die die daten der teilnehmer einträgt
+
+                    

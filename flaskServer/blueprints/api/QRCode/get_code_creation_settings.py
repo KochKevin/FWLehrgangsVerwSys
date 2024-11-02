@@ -24,7 +24,11 @@ def get_code_creation_settings():
     
     #Hard coded settings, should later be loaded from db
     
-    qualification_levels = [
+    
+    settings = blueprints.db.get_settings_for_certificate_creation()
+    settings = settings[0]
+    
+    qualification_list = [
             {
                 "id" : 1,
                 "titel" :  "Einsatzfähigkeit"
@@ -43,21 +47,21 @@ def get_code_creation_settings():
             }
         ]
     
-    
+    #Maybe make them load from db
     amount_uses = {
         "min" : 1,
         "max" : 100
     }
     
     code_life_time = {
-        "in_hours" : 24
+        "in_hours" : settings[1]
     }
     
     plain_data = {
-        "qualification_levels" : qualification_levels,
+        "qualification_list" : qualification_list,
         "amount_uses" : amount_uses,
         "code_life_time" : code_life_time,
-        "max_amount_codes" : 5
+        "max_amount_codes" : settings[0]
     }
     
     

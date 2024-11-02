@@ -30,7 +30,7 @@ def check_for_code():
 
     if len(qualification_certificate_data) == 0:
             #Qualificatrion does not exist
-            return jsonify({"status": 0, "error_message" : "Dieser Code existiert nicht mehr"}), 403
+            return jsonify({"status": 0, "error_message" : "Dieser Code existiert nicht mehr"}), 200
     
     
     qualification_certificate_id = qualification_certificate_data[0][0]
@@ -46,7 +46,8 @@ def check_for_code():
     
     if current_time > certificate_end_time:
         #Code is expired
-        return jsonify({"status": 0, "error_message" : "Dieser Code is abgelaufen"}), 403
+        print("Error: Code is expired")
+        return jsonify({"status": 0, "error_message" : "Dieser Code is abgelaufen"}), 200
     
 
     
@@ -54,7 +55,8 @@ def check_for_code():
     
     if blueprints.db.check_if_user_has_qualification(user_id, qualification_id):
         #User has already the qualification
-        return jsonify({"status": 0, "error_message" : "Qualifikation bereits erhalten"}), 403
+        print("Error: User has alreary the qualification")
+        return jsonify({"status": 0, "error_message" : "Qualifikation bereits erhalten"}), 200
     
     
     

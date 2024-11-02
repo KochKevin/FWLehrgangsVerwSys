@@ -25,21 +25,20 @@
 
     <div id="codeTable"></div>
 
-    <div id="codeCreation">
-      <form style="visibility:hidden;" id="codeCreationForm">
+    <div id="certificateCreation" style="visibility:hidden;">
+      <form id="codeCreationForm" class ="codeCreationForm">
         <h2>Neue Qualifikation erstellen</h2>
 
         <label>Qualifikations Level:</label>
 
-        <select id="qualificationLevelDropdown">
-        </select>
+        <select id = "qualificationLevelDropdown" class="qualificationLevelDropdown"></select>
 
         <br />
         <br />
 
         <label>Maximalanzahl an benutzungen:</label>
 
-        <input type="number" id="maxAmountOfUses"/>
+        <input type="number" id="maxAmountOfUses" class = "maxAmountOfUses"/>
 
         <br />
 
@@ -52,34 +51,26 @@
       </form>
     </div>
 
-    <div id="codeUpdate">
-      <form style="visibility:hidden;" id="codeSettingsForm">
+    <div id="certificateUpdate" style="visibility:hidden;">
+      <form id="codeSettingsForm" class ="codeSettingsForm">
         <h2>Einstellungen</h2>
 
-        <!-- 
-      <label>Qualifikations Level:</label>
+        <label>Qualifikations Level:</label>
 
-      <select id="qualificationLevelDropdown">
-        <option value="none"> Auswählen </option>
-        <option value="1"> 1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-      </select>
+        <select class="qualificationLevelDropdown"></select>
 
-      <br>
-      <br>
+        <br />
+        <br />
 
-      <label>Maximalanzahl an benutzungen:</label>
+        <label>Maximalanzahl an benutzungen:</label>
 
-      <input type="number" id="maxAmountOfUses" min="1" value="15"/>
-      
-      <br>
+        <input type="number" id="maxAmountOfUses" class = "maxAmountOfUses"/>
 
-      <div id = "provisionalEndTime"></div>
+        <br />
 
-      <br>
-     -->
+        <div id="provisionalEndTime"></div>
+
+        <br />
         <button type="button" id="closeFormButton" onclick="()">Schließen</button>
         <button type="button" id="updateFormButton" onclick="onUpdateCodeClicked()">Updaten</button>
       </form>
@@ -87,8 +78,8 @@
       <br />
       <br />
 
-      <div id="qrcode" style="visibility:hidden;"></div>
-      <div id="codeText" style="visibility:hidden;"></div>
+      <div id="qrcode"></div>
+      <div id="codeText"></div>
     </div>
   </body>
 </html>

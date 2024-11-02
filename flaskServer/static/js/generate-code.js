@@ -1,35 +1,8 @@
 /*
-In Zukunft hier mit Websockets arbeiten?
--> Dann können Daten in echtzeit angezeigt werden
-        -> Anzahl an Benutzungen
-
-Button zum Löschen
-Button um neue hinzuzufügen
-    -> Es soll ein Formular geöffnet werden
-        ->Gleiche sollte auch beim anzeigen der Codes angzeigt werden um diese zu bearbeiten 
-
-
-Wann der Code abläuft
-Wie viele benutzug der Code maximal hat
-
-Limit QR Code auf 5 pro teacher
-Löäschen von QR Codes
-
-
-
-
-
-
-Beim Laden der Seite:
-
-Die codes des users laden
-    -> In eine Liste anlegen, durch welche einfach durch gelooped werden kann
-
-Daten für ertsellen eines neuen Codes
-    -> Was für Qualifikations Level gibt es? 
-
-
-
+// Zukünftige Implementierung von Websockets für Echtzeitdaten
+// -> Anzahl der Benutzungen überwachen
+// -> Updates an den Server nur senden, wenn sich die Daten ändern, um Ressourcen zu sparen
+Weiters umbennen von QRCode ... zu certificate
 
 */
 
@@ -39,6 +12,8 @@ let qrCode
 let qualification_certificates;
 
 let codeCreationSettings;
+
+let currentSelectedCertificate = -1;
 document.addEventListener('DOMContentLoaded', function () {
 
     qrCode = new QRCode(document.getElementById("qrcode"), {
@@ -51,13 +26,24 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     //Load Data from Server
-    getCodeCreationSettings();
-    getCodes();
+
+    getCertificateCreationSettings();
+
+
+    //Load created codes from user
+
+    getCodes(function () {
+        renderCodesTableFromUser()
+    });
+
+
+
+    console.log("Inital Load completed")
 
 });
 
 
-function getCodes() {
+function getCodes(callbackFunction) {
     const jsonData = JSON.stringify({
 
     })
@@ -83,9 +69,13 @@ function getCodes() {
         })
         .then(data => {
 
-            console.log("Successful gathered qualifications data: ", data);
+
+            //console.log("Successful gathered qualifications data: ", data);
             qualification_certificates = data.qualification_certificates;
-            renderCodesTableFromUser(data)
+
+            if (callbackFunction) {
+                callbackFunction();
+            }
         })
         .catch(error => {
             //What happns on Error
@@ -98,7 +88,7 @@ function getCodes() {
 //Fix with div
 //currentRenderedCode = -1;
 
-function renderCodesTableFromUser(currentSelectedCode) {
+function renderCodesTableFromUser(currentSelectedCertificate) {
 
     html = "";
 
@@ -110,6 +100,7 @@ function renderCodesTableFromUser(currentSelectedCode) {
     html += "<th>Code</th>";
     html += "<th>Qualifikations Level</th>";
     html += "<th>Anzahl an benutzungen</th>";
+    html += "<th>Maximalanzahl an benutzungen</th>";
     html += "<th>Erstellungs Zeitpunkt</th>";
     html += "<th>Ablauf Zeitpunkt</th>";
     html += "</tr>";
@@ -117,30 +108,23 @@ function renderCodesTableFromUser(currentSelectedCode) {
     for (i = 0; i < qualification_certificates.length; i++) {
 
         html += "<tr>";
+
         html += "<td>" + qualification_certificates[i].id + "</td>";
         html += "<td>" + qualification_certificates[i].code + "</td>";
         html += "<td>" + qualification_certificates[i].qualification_level + "</td>";
         html += "<td>" + qualification_certificates[i].amount_of_uses + "</td>";
+        html += "<td>" + qualification_certificates[i].max_amount_of_uses + "</td>";
         html += "<td>" + qualification_certificates[i].created_timestamp + "</td>";
         html += "<td>" + qualification_certificates[i].end_timestamp + "</td>";
 
 
-        if(i != currentSelectedCode){
+        if (i != currentSelectedCertificate) {
             html += "<td>" + "<button id='showQRCode' onClick='onShowCode(" + i + ")' >Anzeigen</button>" + "</td>";
-        }else{
+        } else {
             html += "<td>" + "Ausgewählt" + "</td>";
         }
 
         html += "<td>" + "<button id='showQRCode' onClick='onDeleteCode(" + i + ")' >Löschen</button>" + "</td>";
-
-
-        /*
-        if(currentRenderedCode == i){
-            html += "<td>" + "Ausgewählt" +"</td>";
-        }else{
-            html += "<td>" + "<button id='showQRCode' onClick='onRenderQRCodeClicked(" + i +")' >Anzeigen</button>" +"</td>";
-        }
-        */
 
         html += "</tr>";
     }
@@ -158,14 +142,16 @@ function renderCodesTableFromUser(currentSelectedCode) {
 
 
 
-function onShowCode(i) {
+function onShowCode(currentCertificate) {
+
+    currentSelectedCertificate = currentCertificate;
+
     //Chnage later to ids with specific id in name to look for those
-    renderCodesTableFromUser(i); 
-    showQRCodeSettings();
+    renderCodesTableFromUser(currentCertificate);
+    showCertificateUpdateSettings(currentCertificate);
 
 
-    code = qualification_certificates[i].code;
-
+    code = qualification_certificates[currentCertificate].code;
     renderQRCode(code)
     document.getElementById("codeText").innerHTML = "<h2>" + code + "</h2>";
 }
@@ -182,20 +168,20 @@ function renderQRCode(code) {
 
 function onCreateNewCode() {
 
-    if(qualification_certificates.length >= codeCreationSettings.max_amount_codes){
+    if (qualification_certificates.length >= codeCreationSettings.max_amount_codes) {
         console.log("Limit of Codes reached. Limit: " + codeCreationSettings.max_amount_codes)
         return;
     }
 
-    showQRCodeSettingToCreateNewCode();
-    
+    showCertficateCreationSettings();
+
 }
 
-function createNewCode(qualificationLevel, maxAmountOfUsers) {
+function createNewCode(qualificationLevel, maxAmountOfUses) {
 
     const jsonData = JSON.stringify({
         "qualification_level": qualificationLevel,
-        "max_user_amount": maxAmountOfUsers
+        "max_amount_of_uses": maxAmountOfUses
 
     })
 
@@ -226,8 +212,13 @@ function createNewCode(qualificationLevel, maxAmountOfUsers) {
 
 
 
-            getCodes();
-            renderQRCode(data.code);
+            getCodes(function () {
+                onShowCode(qualification_certificates.length - 1);
+            });
+            //renderQRCode(data.code);
+            //Show new created code
+            //onShowCode(qualification_certificates.length);
+            console.log("test 2");
         })
         .catch(error => {
             //What happens on Error
@@ -261,7 +252,7 @@ function formatTime(date) {
 }
 
 function onDeleteCode(i) {
-    console.log("Deleting " + i);
+    //console.log("Deleting " + i);
 
     const jsonData = JSON.stringify({
 
@@ -292,11 +283,14 @@ function onDeleteCode(i) {
         .then(data => {
 
 
-            console.log("Deletet " + i + data);
+            //console.log("Deletet " + i + data);
 
 
+            getCodes(function () {
+                hideAllCertificateSettings();
+                renderCodesTableFromUser();
+            });
 
-            getCodes();
         })
         .catch(error => {
             //What happens on Error
@@ -307,92 +301,128 @@ function onDeleteCode(i) {
 
 
 
-function showQRCodeSettingToCreateNewCode() {
-    document.getElementById("codeSettingsForm").style.visibility = 'hidden';
-    document.getElementById("codeCreationForm").style.visibility = 'visible';
-
-    document.getElementById("qrcode").style.visibility = 'hidden';
-    document.getElementById("codeText").style.visibility = 'hidden';
-
-
+function setupCertificateSettings() {
     //Populate Qualification Level dropdown:
-    qualificationLevelDropdown = document.getElementById("qualificationLevelDropdown");
+    qualificationLevelDropdowns = document.getElementsByClassName("qualificationLevelDropdown");
 
-    var initalOption = document.createElement("option");
-    initalOption.value = "none";
-    initalOption.innerHTML = "Auswählen";
-    qualificationLevelDropdown.appendChild(initalOption);
+    for (qualificationLevelDropdown of qualificationLevelDropdowns) {
 
-    for(i = 0; i < codeCreationSettings.qualification_levels.length; i++){
-        var option = document.createElement("option");
-        option.value = codeCreationSettings.qualification_levels[i].id;
-        option.innerHTML = codeCreationSettings.qualification_levels[i].titel;
+        var initalOption = document.createElement("option");
+        initalOption.value = "none";
+        initalOption.innerHTML = "Auswählen";
+        qualificationLevelDropdown.appendChild(initalOption);
 
-        qualificationLevelDropdown.appendChild(option);
+        for (i = 0; i < codeCreationSettings.qualification_list.length; i++) {
+            var option = document.createElement("option");
+            option.value = codeCreationSettings.qualification_list[i].id;
+            option.innerHTML = codeCreationSettings.qualification_list[i].titel;
+
+            qualificationLevelDropdown.appendChild(option);
+        }
     }
 
-    //Set  max user amount
-    document.getElementById("maxAmountOfUses").setAttribute("min", codeCreationSettings.amount_uses.min);
-    document.getElementById("maxAmountOfUses").setAttribute("max", codeCreationSettings.amount_uses.max);
-    document.getElementById("maxAmountOfUses").setAttribute("setValue", 1);
+    //Set max user amount
+    maxAmountOfUsesElements = document.getElementsByClassName("maxAmountOfUses");
+    for (maxAmountOfUses of maxAmountOfUsesElements) {
+        maxAmountOfUses.setAttribute("min", codeCreationSettings.amount_uses.min);
+        maxAmountOfUses.setAttribute("max", codeCreationSettings.amount_uses.max);
+        maxAmountOfUses.setAttribute("setValue", 1);
+    }
+}
+
+function showCertficateCreationSettings() {
+    document.getElementById("certificateCreation").style.visibility = 'visible';
+    document.getElementById("certificateUpdate").style.visibility = 'hidden';
+
 
     //Set code life time
-
     endTimeInMilli = codeCreationSettings.code_life_time.in_hours * 60 * 60 * 1000;
     currentDate = new Date();
     endDate = new Date(currentDate.getTime() + endTimeInMilli);
     document.getElementById("provisionalEndTime").innerHTML = "Code läuft ab: " + formatTime(endDate) + "  " + formatDate(endDate)
 }
 
-function showQRCodeSettings() {
-    document.getElementById("codeSettingsForm").style.visibility = 'visible';
-    document.getElementById("codeCreationForm").style.visibility = 'hidden';
+function showCertificateUpdateSettings(currentCertificate) {
 
-    document.getElementById("qrcode").style.visibility = 'visible';
-    document.getElementById("codeText").style.visibility = 'visible';
+    document.getElementById("certificateCreation").style.visibility = 'hidden';
+    document.getElementById("certificateUpdate").style.visibility = 'visible';
+
+
+    //Set Pre Values
+    qualificationLevelDropdown = document.getElementById("certificateUpdate").querySelector(".codeSettingsForm").querySelector(".qualificationLevelDropdown");
+    qualificationLevelDropdown.value = qualification_certificates[currentCertificate].qualification_level;
+
+    maxAmountOfUses = document.getElementById("certificateUpdate").querySelector(".codeSettingsForm").querySelector(".maxAmountOfUses");
+    maxAmountOfUses.value = qualification_certificates[currentCertificate].max_amount_of_uses;
+
+}
+
+function hideAllCertificateSettings() {
+    document.getElementById("certificateCreation").style.visibility = 'hidden';
+    document.getElementById("certificateUpdate").style.visibility = 'hidden';
 }
 
 function onSaveCodeClicked() {
 
-    qualificationLevel = document.getElementById("qualificationLevelDropdown").value;
+    qualificationLevel = document.getElementById("certificateCreation").querySelector(".codeCreationForm").querySelector(".qualificationLevelDropdown").value;
 
     if (qualificationLevel == "none") {
         console.error("Select an qualification level");
         return;
     }
 
-    console.log(qualificationLevel);
+    maxAmountOfUses = document.getElementById("certificateCreation").querySelector(".codeCreationForm").querySelector(".maxAmountOfUses").value;
 
-    maxAmountOfUsers = document.getElementById("maxAmountOfUses").value;
-
-    if (maxAmountOfUsers < codeCreationSettings.amount_uses.min) {
+    if (maxAmountOfUses < codeCreationSettings.amount_uses.min) {
         console.error("Max User amount is smaller than " + codeCreationSettings.amount_uses.min);
         return;
     }
 
-    if(maxAmountOfUsers > codeCreationSettings.amount_uses.max){
+    if (maxAmountOfUses > codeCreationSettings.amount_uses.max) {
         console.error("Max User amount is bigger than " + codeCreationSettings.amount_uses.max);
         return;
     }
 
 
-    createNewCode(qualificationLevel, maxAmountOfUsers)
+    createNewCode(qualificationLevel, maxAmountOfUses)
 }
 
 function onUpdateCodeClicked() {
+    qualificationId = document.getElementById("certificateUpdate").querySelector(".codeSettingsForm").querySelector(".qualificationLevelDropdown").value;
+
+    if (qualificationId == "none") {
+        console.error("Select an qualification level");
+        return;
+    }
+
+    maxAmountOfUses = document.getElementById("certificateUpdate").querySelector(".codeSettingsForm").querySelector(".maxAmountOfUses").value;
+
+    if (maxAmountOfUses < codeCreationSettings.amount_uses.min) {
+        console.error("Max User amount is smaller than " + codeCreationSettings.amount_uses.min);
+        return;
+    }
+
+    if (maxAmountOfUses > codeCreationSettings.amount_uses.max) {
+        console.error("Max User amount is bigger than " + codeCreationSettings.amount_uses.max);
+        return;
+    }
+
+
+    updateCode(qualification_certificates[currentSelectedCertificate].id, qualificationId, maxAmountOfUses)
 
 }
 
 
-function updateCode(id, qualificationLevel, maxAmountOfUsers){
+function updateCode(certificateId, qualificationId, maxAmountOfUses) {
 
     const jsonData = JSON.stringify({
-        "qualification_level": qualificationLevel,
-        "max_user_amount": maxAmountOfUsers
+        "certificate_id": certificateId,
+        "qualification_id": qualificationId,
+        "max_amount_of_uses": maxAmountOfUses
     })
 
 
-    fetch("/api/v1/", {
+    fetch("/api/v1/update-qr-code-data", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -413,6 +443,10 @@ function updateCode(id, qualificationLevel, maxAmountOfUsers){
         })
         .then(data => {
 
+            getCodes(function () {
+                renderCodesTableFromUser();
+                showCertificateUpdateSettings(currentSelectedCertificate);
+            });
         })
         .catch(error => {
             //What happens on Error
@@ -421,7 +455,7 @@ function updateCode(id, qualificationLevel, maxAmountOfUsers){
 }
 
 
-function getCodeCreationSettings(){
+function getCertificateCreationSettings() {
 
     fetch("/api/v1/get_code_creation_settings", {
         method: "POST",
@@ -445,6 +479,7 @@ function getCodeCreationSettings(){
 
             console.log(data);
             codeCreationSettings = data;
+            setupCertificateSettings();
 
         })
         .catch(error => {

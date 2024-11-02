@@ -506,7 +506,7 @@ def check_if_QRCode_already_exist(code):
     SELECT
     code
     FROM 
-    qr_code_qualification_certificate
+    certificates
     WHERE
     code = (?)
     """
@@ -521,36 +521,35 @@ def check_if_QRCode_already_exist(code):
         return False
     
     
-def add_QRCode_qualification_certificate(qualification_id, creator_user_id, end_timestamp):
-    
+def add_QRCode_qualification_certificate(qualification_id, creator_user_id, end_timestamp, max_amount_of_uses):
     query = """
     INSERT INTO 
-    qr_code_qualification_certificate
-    (qualification_id, created_by_user_id, created_at_timestamp, end_timestamp, amount_of_uses)
+    certificates
+    (qualification_id, created_by_user_id, created_at_timestamp, end_timestamp, amount_of_uses, max_amount_of_uses)
     VALUES
-    (?,?, datetime(current_timestamp, 'localtime'),?, ?)
+    (?,?, datetime(current_timestamp, 'localtime'),?, ?, ?)
     """ 
     
     db_cursor = connect()
-    db_cursor.execute(query, (qualification_id, creator_user_id, end_timestamp, 0))
+    db_cursor.execute(query, (qualification_id, creator_user_id, end_timestamp, 0, max_amount_of_uses))
     last_id = db_cursor.lastrowid
     disconnect(db_cursor)
     return last_id
 
 
 
-def set_qrCode_qualification_certificate_code(qr_code_id, code):
+def set_qrCode_qualification_certificate_code(certificate_id, code):
     query = """
     UPDATE
-    qr_code_qualification_certificate
+    certificates
     SET
     code = (?)
     WHERE
-    qr_code_qualification_certificate.qr_code_id = (?) 
+    certificates.certificate_id = (?) 
     """ 
     
     db_cursor = connect()
-    db_cursor.execute(query, (code, qr_code_id))
+    db_cursor.execute(query, (code, certificate_id))
     disconnect(db_cursor)
     return
 
@@ -559,9 +558,9 @@ def find_qualification_certificate(qr_code):
     SELECT
     *
     FROM
-    qr_code_qualification_certificate
+    certificates
     WHERE
-    qr_code_qualification_certificate.code = (?)
+    certificates.code = (?)
     """ 
     
     db_cursor = connect()
@@ -571,17 +570,17 @@ def find_qualification_certificate(qr_code):
     return record
 
 #Increase or decrease amount of useses on qualification certificate
-def increase_amount_uses_of_qualification_certificate(qr_code_id, amount = 1):
+def increase_amount_uses_of_qualification_certificate(certificate_id, amount = 1):
     query = """
     UPDATE
-    qr_code_qualification_certificate
+    certificates
     SET
     amount_of_uses = amount_of_uses + ?
     WHERE
-    qr_code_id = ?
+    certificate_id = ?
     """ 
     db_cursor = connect()
-    db_cursor.execute(query, (amount, qr_code_id))
+    db_cursor.execute(query, (amount, certificate_id))
     disconnect(db_cursor)
     return
 
@@ -614,9 +613,9 @@ def get_created_qualification_certificate_from_user(user_id):
     SELECT
     *
     FROM
-    qr_code_qualification_certificate
+    certificates
     WHERE
-    qr_code_qualification_certificate.created_by_user_id = (?)
+    certificates.created_by_user_id = (?)
     """ 
 
     db_cursor = connect()
@@ -641,17 +640,94 @@ def get_user_data_by_id(user_id):
     disconnect(db_cursor)
     return record
 
-def delete_qualification_certificate(qr_code_id, user_id):
+def delete_qualification_certificate(certificate_id, user_id):
     query = """
     DELETE
     FROM
-    qr_code_qualification_certificate
+    certificates
     WHERE
-    qr_code_qualification_certificate.created_by_user_id = (?)
+    certificates.created_by_user_id = (?)
     AND
-    qr_code_qualification_certificate.qr_code_id = (?)
+    certificates.certificate_id = (?)
     """ 
     db_cursor = connect()
-    db_cursor.execute(query, (user_id, qr_code_id))
+    db_cursor.execute(query, (user_id, certificate_id))
+    disconnect(db_cursor)
+    return
+
+
+def get_settings_for_certificate_creation():
+    query = """
+    SELECT
+    system_settings.certificate_max_amount,
+    system_settings.certificate_life_time
+    FROM
+    system_settings
+    """ 
+
+    db_cursor = connect()
+    db_cursor.execute(query)
+    record = db_cursor.fetchall()
+    disconnect(db_cursor)
+    return record
+
+def get_setting_certificate_life_time():
+    query = """
+    SELECT
+    system_settings.certificate_life_time
+    FROM
+    system_settings
+    """ 
+
+    db_cursor = connect()
+    db_cursor.execute(query)
+    record = db_cursor.fetchall()
+    disconnect(db_cursor)
+    return record
+
+def get_setting_certificate_max_amount_per_teacher():
+    query = """
+    SELECT
+    system_settings.certificate_max_amount
+    FROM
+    system_settings
+    """ 
+
+    db_cursor = connect()
+    db_cursor.execute(query)
+    record = db_cursor.fetchall()
+    disconnect(db_cursor)
+    return record
+
+
+def get_setting_cron_certificate_cleanup_interval():
+    query = """
+    SELECT
+    system_settings.cron_certificate_cleanup_interval
+    FROM
+    system_settings
+    """ 
+
+    db_cursor = connect()
+    db_cursor.execute(query)
+    record = db_cursor.fetchall()
+    disconnect(db_cursor)
+    return record
+
+
+def update_certificate(qualification_id, max_amount_of_uses, certificate_id, user_id):
+    query = """
+    UPDATE
+    certificates
+    SET
+    qualification_id = (?),
+    max_amount_of_uses = (?)
+    WHERE
+    certificates.certificate_id = (?)
+    AND
+    certificates.created_by_user_id = (?)
+    """ 
+    db_cursor = connect()
+    db_cursor.execute(query, (qualification_id, max_amount_of_uses, certificate_id, user_id))
     disconnect(db_cursor)
     return
