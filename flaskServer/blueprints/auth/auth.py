@@ -66,7 +66,7 @@ def on_auth_signup():
     
     #Hash Password and add user to db
     hashed_password = hash_password(plain_password)
-    user_ID = blueprints.db.add_user(municipalitie, fire_station, first_name, last_name, email, hashed_password)
+    user_ID = blueprints.db.add_user(municipalitie, fire_station, first_name, last_name, email, hashed_password, 2)
     
     print(user_ID)
     

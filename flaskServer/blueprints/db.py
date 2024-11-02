@@ -45,10 +45,10 @@ def check_if_mail_is_available(email):
         return False
 
 #Add User to db and returns its user id
-def add_user(municipalitie, fire_station, first_name, last_name, email, hashed_password):
+def add_user(municipalitie, fire_station, first_name, last_name, email, hashed_password, rank = 0):
     db_cursor = connect()
-    sqlite_query = "INSERT INTO users (first_name, last_name, mail_adress, password) VALUES (?, ?, ?, ?)"
-    db_cursor.execute(sqlite_query, (first_name, last_name, email, hashed_password))
+    sqlite_query = "INSERT INTO users (first_name, last_name, mail_adress, password, rank) VALUES (?, ?, ?, ?, ?)"
+    db_cursor.execute(sqlite_query, (first_name, last_name, email, hashed_password, rank))
     
     user_id = db_cursor.lastrowid
     
